@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数独游戏</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="game-area">
+            <div class="header">
+                <h1>数独游戏</h1>
+                <div class="game-info">
+                    <span class="errors">错误: <span id="errors">0</span>/3</span>
+                    <span class="timer">时间: <span id="timer">00:00</span></span>
+                </div>
+            </div>
+            
+            <div class="game-container">
+                <div class="controls">
+                    <div class="difficulty-selector">
+                        <h3>难度选择 <span id="difficulty-info-btn" class="info-btn">?</span></h3>
+                        <div class="difficulty-buttons">
+                            <button id="easy-btn" class="difficulty-btn active">简易</button>
+                            <button id="medium-btn" class="difficulty-btn">中等</button>
+                            <button id="hard-btn" class="difficulty-btn">困难</button>
+                        </div>
+                    </div>
+                    
+                    <div class="numbers">
+                        <div class="number-grid">
+                            <button class="number" data-number="1">1</button>
+                            <button class="number" data-number="2">2</button>
+                            <button class="number" data-number="3">3</button>
+                            <button class="number" data-number="4">4</button>
+                            <button class="number" data-number="5">5</button>
+                            <button class="number" data-number="6">6</button>
+                            <button class="number" data-number="7">7</button>
+                            <button class="number" data-number="8">8</button>
+                            <button class="number" data-number="9">9</button>
+                        </div>
+                        <button id="delete-btn" class="delete-btn">删除</button>
+                    </div>
+                    
+                    <div class="actions">
+                        <button id="hint-btn" class="action-btn">提示</button>
+                        <button id="show-answer-btn" class="action-btn">查看答案</button>
+                        <button id="new-game-btn" class="action-btn">新游戏</button>
+                    </div>
+                </div>
+
+                <div id="board" class="board"></div>
+            </div>
+        </div>
+
+        <div class="tutorial-section">
+            <h2>数独解法技巧</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-item">
+                    <h3>基本规则</h3>
+                    <p>在9×9的格子中填入1-9的数字，使得每行、每列和每个3×3的方格中的数字都不重复。</p>
+                </div>
+                <div class="tutorial-item">
+                    <h3>单数法</h3>
+                    <p>查看每个空格，找出根据已知数字，这个位置只可能填入的唯一数字。比如在某行中，如果1-9中只有5还没出现，那这个空格就一定是5。</p>
+                </div>
+                <div class="tutorial-item">
+                    <h3>候选数法</h3>
+                    <p>在每个空格中写下所有可能的数字（候选数），然后通过排除法，逐步减少候选数，最终找到唯一解。</p>
+                </div>
+                <div class="tutorial-item">
+                    <h3>区块法</h3>
+                    <p>观察3×3的方格，如果某个数字在这个方格中只能出现在某一行或某一列，那么这个数字在这行或列的其他方格中就不能再出现。</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tutorial-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>提示</h2>
+                <div id="tutorial-content"></div>
+                <div class="tutorial-navigation">
+                    <button id="prev-step">上一步</button>
+                    <span class="step-counter"></span>
+                    <button id="next-step">下一步</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-over-modal" class="modal">
+            <div class="modal-content game-over-content">
+                <h2>游戏结束</h2>
+                <p>你犯了3个错误并输掉了这场比赛</p>
+                <div class="game-over-buttons">
+                    <button id="second-chance-btn" class="action-btn">第二次机会</button>
+                    <button id="new-game-after-loss-btn" class="action-btn">新游戏</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="difficulty-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>难度说明</h2>
+                <div class="difficulty-info">
+                    <div class="difficulty-item">
+                        <h3>简易</h3>
+                        <p>适合初学者的难度，数独谜题会保留较多的初始数字（约46个），使用基本的解题技巧即可完成。</p>
+                        <ul>
+                            <li>初始数字：46个左右</li>
+                            <li>所需技巧：单数法</li>
+                            <li>适合人群：初学者和休闲玩家</li>
+                        </ul>
+                    </div>
+                    <div class="difficulty-item">
+                        <h3>中等</h3>
+                        <p>需要一定解题经验，数独谜题会保留中等数量的初始数字（约36个），需要运用多种解题技巧。</p>
+                        <ul>
+                            <li>初始数字：36个左右</li>
+                            <li>所需技巧：单数法、候选数法</li>
+                            <li>适合人群：有一定经验的玩家</li>
+                        </ul>
+                    </div>
+                    <div class="difficulty-item">
+                        <h3>困难</h3>
+                        <p>挑战性较大，数独谜题仅保留少量初始数字（约26个），需要熟练掌握各种高级解题技巧。</p>
+                        <ul>
+                            <li>初始数字：26个左右</li>
+                            <li>所需技巧：单数法、候选数法、区块法等高级技巧</li>
+                            <li>适合人群：数独爱好者和有丰富经验的玩家</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
